@@ -1,0 +1,16 @@
+[
+  {
+    "path": "tests/test_keys.py",
+    "beforeSha256": "0eac1b2ad7c0a4e0f24aac43a528942cfaabfef8d6bca38fce18657da65bb42a",
+    "afterSha256": "575498895f2fd6649fc59b3326e7d7d13b7ac384eecd01b1b8f3afa0e1f474f9",
+    "old": "@pytest.mark.parametrize(\"env\", ({}, {\"LLM_USER_PATH\": \"/tmp/llm-keys-test\"}))\ndef test_keys_in_user_path(monkeypatch, env, user_path):\n    for key, value in env.items():\n        monkeypatch.setenv(key, value)\n    runner = CliRunner()\n    result = runner.invoke(cli, [\"keys\", \"path\"])\n    assert result.exit_code == 0\n    if env:\n        base = env[\"LLM_USER_PATH\"]\n    else:\n        base = str(user_path)\n    expected = str(pathlib.Path(base) / \"keys.json\")\n    assert result.output.strip() == expected\n",
+    "new": "@pytest.mark.parametrize(\"custom_user_path\", (False, True))\ndef test_keys_in_user_path(monkeypatch, custom_user_path, user_path, tmp_path):\n    base = tmp_path / \"llm-keys-test\" if custom_user_path else user_path\n    if custom_user_path:\n        monkeypatch.setenv(\"LLM_USER_PATH\", str(base))\n    runner = CliRunner()\n    result = runner.invoke(cli, [\"keys\", \"path\"])\n    assert result.exit_code == 0\n    expected = str(pathlib.Path(base) / \"keys.json\")\n    assert result.output.strip() == expected\n"
+  },
+  {
+    "path": "tests/test_llm_logs.py",
+    "beforeSha256": "b7a63cb061c18aea06b4f6be1a3bf85a6b6c0b2fea43b9ee735ffb90d60d802e",
+    "afterSha256": "61b58f48a27f48de14b87ba5de82ec7a2b9f43223d686027f262e2020f9ed037",
+    "old": "@pytest.mark.parametrize(\"env\", ({}, {\"LLM_USER_PATH\": \"/tmp/llm-user-path\"}))\ndef test_logs_path(monkeypatch, env, user_path):\n    for key, value in env.items():\n        monkeypatch.setenv(key, value)\n    runner = CliRunner()\n    result = runner.invoke(cli, [\"logs\", \"path\"])\n    assert result.exit_code == 0\n    if env:\n        base = env[\"LLM_USER_PATH\"]\n    else:\n        base = str(user_path)\n    expected = str(pathlib.Path(base) / \"logs.db\")\n    assert result.output.strip() == expected\n",
+    "new": "@pytest.mark.parametrize(\"custom_user_path\", (False, True))\ndef test_logs_path(monkeypatch, custom_user_path, user_path, tmp_path):\n    base = tmp_path / \"llm-user-path\" if custom_user_path else user_path\n    if custom_user_path:\n        monkeypatch.setenv(\"LLM_USER_PATH\", str(base))\n    runner = CliRunner()\n    result = runner.invoke(cli, [\"logs\", \"path\"])\n    assert result.exit_code == 0\n    expected = str(pathlib.Path(base) / \"logs.db\")\n    assert result.output.strip() == expected\n"
+  }
+]
