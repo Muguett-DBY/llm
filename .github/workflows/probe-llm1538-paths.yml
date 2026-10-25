@@ -67,6 +67,10 @@
           "run": "python -m pip install --no-cache-dir . --group dev"
         },
         {
+          "name": "Record full-file Ruff baseline without changing source",
+          "run": "python ../probe/validation/llm1538/lint_control.py before --output \"${{ runner.temp }}/llm1538-lint-before.json\""
+        },
+        {
           "name": "Observe original four tests and root mkdir calls",
           "run": "python ../probe/validation/llm1538/audit_path_tests.py before --output \"${{ runner.temp }}/llm1538-before.json\" --basetemp \"${{ runner.temp }}/llm1538-before-tests\""
         },
@@ -79,8 +83,8 @@
           "run": "python ../probe/validation/llm1538/audit_path_tests.py after --output \"${{ runner.temp }}/llm1538-after.json\" --basetemp \"${{ runner.temp }}/llm1538-after-tests\""
         },
         {
-          "name": "Check formatting of proposed test changes",
-          "run": "python -m black --check tests/test_keys.py tests/test_llm_logs.py\npython -m ruff check tests/test_keys.py tests/test_llm_logs.py"
+          "name": "Check full-file Black and unchanged Ruff diagnostics",
+          "run": "python -m black --check tests/test_keys.py tests/test_llm_logs.py\npython ../probe/validation/llm1538/lint_control.py after --baseline \"${{ runner.temp }}/llm1538-lint-before.json\" --output \"${{ runner.temp }}/llm1538-lint-after.json\""
         },
         {
           "name": "Upload bounded observations",
